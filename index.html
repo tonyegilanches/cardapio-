@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Burguer House — Cardápio</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #e8190e;
+    --dark: #111111;
+    --card-bg: #1a1a1a;
+    --text: #f0ece4;
+    --muted: #888;
+    --accent: #f5c518;
+    --radius: 14px;
+    --whatsapp: #25d366;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    min-height: 100vh;
+    padding-bottom: 120px;
+  }
+
+  /* ── HERO ── */
+  header {
+    background: var(--red);
+    padding: 32px 20px 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      transparent, transparent 18px,
+      rgba(0,0,0,.08) 18px, rgba(0,0,0,.08) 36px
+    );
+  }
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3.2rem;
+    letter-spacing: 3px;
+    line-height: 1;
+    position: relative;
+    text-shadow: 3px 3px 0 #8b0000;
+  }
+  .logo span { color: var(--accent); }
+  header p {
+    position: relative;
+    margin-top: 6px;
+    font-size: .9rem;
+    opacity: .85;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+
+  /* ── SEARCH ── */
+  .search-wrap {
+    padding: 16px 16px 0;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--dark);
+  }
+  .search-wrap input {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 50px;
+    border: 2px solid #333;
+    background: #1a1a1a;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .search-wrap input:focus { border-color: var(--red); }
+  .search-wrap input::placeholder { color: var(--muted); }
+
+  /* ── NAV PILLS ── */
+  .cat-nav {
+    display: flex;
+    gap: 8px;
+    padding: 14px 16px 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .cat-nav::-webkit-scrollbar { display: none; }
+  .cat-pill {
+    flex-shrink: 0;
+    background: #222;
+    border: none;
+    border-radius: 50px;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: .82rem;
+    font-weight: 700;
+    padding: 7px 16px;
+    cursor: pointer;
+    transition: background .2s, color .2s;
+    white-space: nowrap;
+  }
+  .cat-pill.active, .cat-pill:hover { background: var(--red); color: #fff; }
+
+  /* ── SECTION TITLE ── */
+  .cat-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: 2px;
+    padding: 28px 16px 8px;
+    color: var(--accent);
+    border-left: 4px solid var(--red);
+    padding-left: 14px;
+    margin-left: 12px;
+  }
+
+  /* ── CARDS GRID ── */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+    gap: 12px;
+    padding: 8px 14px;
+  }
+
+  .card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border-color .2s, transform .15s;
+    position: relative;
+  }
+  .card:hover { border-color: var(--red); transform: translateY(-2px); }
+  .card.in-cart { border-color: var(--accent); }
+
+  .card-img {
+    width: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    background: #2a2a2a;
+  }
+  .card-img-placeholder {
+    width: 100%;
+    aspect-ratio: 1/1;
+    background: #2a2a2a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+  }
+
+  .card-body {
+    padding: 10px 10px 12px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .card-name {
+    font-weight: 800;
+    font-size: .88rem;
+    line-height: 1.2;
+  }
+  .card-desc {
+    font-size: .73rem;
+    color: var(--muted);
+    line-height: 1.3;
+    flex: 1;
+  }
+  .card-price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    color: var(--accent);
+    margin-top: 6px;
+  }
+
+  .card-add-btn {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: var(--red);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    font-size: 1.2rem;
+    line-height: 28px;
+    text-align: center;
+    cursor: pointer;
+    transition: background .2s, transform .15s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .card-add-btn:hover { background: #c0140a; transform: scale(1.12); }
+  .card.in-cart .card-add-btn { background: var(--accent); color: var(--dark); }
+
+  .badge-qty {
+    display: none;
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: var(--accent);
+    color: var(--dark);
+    font-weight: 900;
+    font-size: .75rem;
+    border-radius: 50px;
+    padding: 2px 8px;
+  }
+  .card.in-cart .badge-qty { display: block; }
+
+  /* ── FLOATING CART ── */
+  #cart-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 100;
+    background: #111;
+    border-top: 2px solid #222;
+    padding: 12px 16px;
+    display: none;
+    gap: 12px;
+    align-items: center;
+  }
+  #cart-bar.visible { display: flex; }
+  #cart-summary {
+    flex: 1;
+    font-size: .85rem;
+    font-weight: 700;
+  }
+  #cart-summary strong { color: var(--accent); font-size: 1rem; }
+  #open-cart-btn {
+    background: var(--red);
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 11px 20px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: .95rem;
+    cursor: pointer;
+    transition: background .2s;
+  }
+  #open-cart-btn:hover { background: #c0140a; }
+
+  /* ── CART MODAL ── */
+  #cart-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(0,0,0,.75);
+    backdrop-filter: blur(4px);
+    align-items: flex-end;
+    justify-content: center;
+  }
+  #cart-modal.open { display: flex; }
+  .cart-sheet {
+    background: #161616;
+    border-radius: 24px 24px 0 0;
+    width: 100%;
+    max-width: 520px;
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: slideUp .28s ease;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .cart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 20px 14px;
+    border-bottom: 1px solid #282828;
+  }
+  .cart-header h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 2px;
+  }
+  #close-cart {
+    background: #282828;
+    border: none;
+    color: var(--text);
+    border-radius: 50%;
+    width: 34px; height: 34px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  #cart-items {
+    overflow-y: auto;
+    flex: 1;
+    padding: 10px 16px;
+  }
+
+  .cart-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #222;
+  }
+  .cart-item-name { flex: 1; font-weight: 700; font-size: .9rem; }
+  .cart-item-price { color: var(--accent); font-weight: 800; font-size: .95rem; white-space: nowrap; }
+  .qty-ctrl { display: flex; align-items: center; gap: 8px; }
+  .qty-btn {
+    background: #2a2a2a;
+    border: none;
+    color: var(--text);
+    border-radius: 50%;
+    width: 28px; height: 28px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .15s;
+  }
+  .qty-btn:hover { background: var(--red); }
+  .qty-num { font-weight: 800; min-width: 18px; text-align: center; }
+
+  /* obs field */
+  #obs-wrap { padding: 12px 16px 6px; }
+  #obs-wrap label { font-size: .82rem; color: var(--muted); display: block; margin-bottom: 6px; }
+  #obs-input {
+    width: 100%;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: .9rem;
+    padding: 10px 12px;
+    resize: none;
+    outline: none;
+  }
+  #obs-input:focus { border-color: var(--red); }
+
+  .cart-footer {
+    padding: 12px 16px 20px;
+    border-top: 1px solid #282828;
+  }
+  .cart-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    font-weight: 800;
+    font-size: 1rem;
+  }
+  .cart-total span:last-child { color: var(--accent); font-size: 1.3rem; }
+
+  #send-whatsapp {
+    width: 100%;
+    background: var(--whatsapp);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    padding: 15px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 1.05rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: background .2s, transform .15s;
+  }
+  #send-whatsapp:hover { background: #1eab54; transform: scale(1.01); }
+  #send-whatsapp svg { width: 22px; height: 22px; fill: #fff; }
+
+  .empty-cart {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+    font-size: .95rem;
+  }
+
+  /* ── SEARCH EMPTY ── */
+  .no-results {
+    text-align: center;
+    padding: 50px 20px;
+    color: var(--muted);
+    font-size: 1rem;
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Burguer <span>House</span></div>
+  <p>🍔 Artesanal • Rápido • Gostoso</p>
+</header>
+
+<div class="search-wrap">
+  <input type="search" id="search-input" placeholder="🔍 Buscar item no cardápio...">
+</div>
+
+<nav class="cat-nav" id="cat-nav"></nav>
+
+<main id="menu-main"></main>
+<div class="no-results" id="no-results">Nenhum item encontrado 😕</div>
+
+<!-- CART BAR -->
+<div id="cart-bar">
+  <div id="cart-summary">
+    <div id="cart-count-label">0 itens</div>
+    <strong id="cart-total-label">R$ 0,00</strong>
+  </div>
+  <button id="open-cart-btn">🛒 Ver Carrinho</button>
+</div>
+
+<!-- CART MODAL -->
+<div id="cart-modal">
+  <div class="cart-sheet">
+    <div class="cart-header">
+      <h2>🛒 Seu Pedido</h2>
+      <button id="close-cart">✕</button>
+    </div>
+    <div id="cart-items"></div>
+    <div id="obs-wrap">
+      <label for="obs-input">Observações (opcional)</label>
+      <textarea id="obs-input" rows="2" placeholder="Ex: sem cebola, maionese à parte..."></textarea>
+    </div>
+    <div class="cart-footer">
+      <div class="cart-total">
+        <span>Total</span>
+        <span id="modal-total">R$ 0,00</span>
+      </div>
+      <button id="send-whatsapp">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+        Enviar Pedido pelo WhatsApp
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// MENU DATA
+// ══════════════════════════════════════════════
+const MENU = [
+  {
+    category: "Artesanais Burguer House",
+    items: [
+      { id: 1,  name: "2 X Burguer Por 39,99",          desc: "2 X Burguer imperdível!!!",                                                              price: 39.99, img: "promo-2-x-burguer.jpg" },
+      { id: 2,  name: "X-Burgue",                        desc: "Pão Brioche, Maionese Verde, Hambúrguer Artesanal 130g e Cheeder Fatia",                  price: 23.99, img: "x-burgue.jpg" },
+      { id: 3,  name: "X Burguerlino",                   desc: "Pão Brioche, Maionese Verde, Hambúrguer Artesanal 130g, Mussarela e Frango Desfiado",     price: 27.99, img: "x-burguerlino.jpg" },
+      { id: 4,  name: "X Cheeder Cremoso",               desc: "Pão Brioche Saladinho, Maionese Verde, Hambúrguer Artesanal Blend 130g, Cheeder Fatia e muito Cheeder Cremoso", price: 29.99, img: "x-cheeder-cremoso.jpg" },
+      { id: 5,  name: "X Catupiry Cremoso",              desc: "Pão Brioche, Maionese Verde, Hambúrguer Artesanal 130g, Mussarela e Catupiry Original",   price: 29.99, img: "x-catupiry-cremoso.jpg" },
+      { id: 6,  name: "X-Salada",                        desc: "Pão Brioche, Maionese Verde, Hambúrguer Artesanal 130g, Cheeder Fatia e muita Salada",     price: 29.99, img: "x-salada.jpg" },
+      { id: 7,  name: "X Picles",                        desc: "Pão Brioche, Maionese Verde, Picles, Hambúrguer Artesanal 130g, Mussarela, Salada e Cebola Roxa", price: 34.99, img: "x-picles.jpg" },
+      { id: 8,  name: "X-Bacon",                         desc: "Pão Brioche, Maionese Verde, Hambúrguer Artesanal 130g, Cheeder Fatia, Salada e Bacon",    price: 34.99, img: "x-bacon.jpg" },
+      { id: 9,  name: "X-Egg",                           desc: "Pão Brioche, Maionese, Carne Artesanal 130g, Queijo Cheeder, Salada e Ovo",               price: 34.99, img: "x-egg.jpg" },
+      { id: 10, name: "X-Nuguets Bacon",                 desc: "Pão Brioche, Maionese Verde, Hambúrguer Artesanal 130g, Cheeder Fatia, 3 Nuggets, Bacon e Salada", price: 37.99, img: "x-nuguets-bacon.jpg" },
+      { id: 11, name: "X Costela",                       desc: "Pão Brioche, Maionese, Hambúrguer 130g, Mussarela e Costela Desfiada",                    price: 34.99, img: "x-costela.jpg" },
+      { id: 12, name: "X Costela Do Chef",               desc: "Pão Brioche, Maionese Verde, 120g Costela Desfiada, Mussarela, Catupiry Cremoso, Tomate e Picles", price: 34.98, img: "x-costela-do-chef.jpg" },
+      { id: 13, name: "X-Tudo",                          desc: "Pão Brioche, Maionese Verde, Hambúrguer Artesanal 130g, Mussarela ou Cheeder Fatia, Salada, Cebola Roxa, Bacon, Ovo", price: 36.99, img: "x-tudo.jpg" },
+      { id: 14, name: "X Abacaxi",                       desc: "Pão Brioche, Molho Billy Jack, Hambúrguer Artesanal 150g, Mussarela, Abacaxi, Salada e Cebola Roxa", price: 34.99, img: "x-abacaxi.jpg" },
+      { id: 15, name: "X Abacostela",                    desc: "Pão Brioche, Maionese Verde, Hambúrguer Artesanal 130g, Abacaxi, Costela Desfiada, Mussarela e Bacon", price: 39.99, img: "x-abacostela.jpg" },
+      { id: 16, name: "Burguer House",                   desc: "Pão Brioche, Maionese Verde, 2 Hambúrgueres Artesanal 130g, Mussarela e Bacon",           price: 39.99, img: "burguer-house.jpg" },
+      { id: 17, name: "Burguer House 2.0",               desc: "Pão Brioche, Maionese Verde, 2 Hambúrgueres 130g, Cheeder Fatia, Salada, Ovo e Catupiry",  price: 39.99, img: "burguer-house-2.jpg" },
+      { id: 18, name: "Burguer House 3.0",               desc: "Pão Brioche, Maionese Verde, 3 Hambúrgueres Artesanal 130g, Cheeder Fatia e Cheeder Cremoso", price: 44.99, img: "burguer-house-3.jpg" },
+      { id: 19, name: "Burguer House 4.0 Cheeder Bacon", desc: "Pão Brioche, Maionese Verde, 4 Hambúrgueres Artesanal 130g, Cheeder Fatia, Cheeder Cremoso e Bacon", price: 54.99, img: "burguer-house-4-cheeder-bacon.jpg" },
+    ]
+  },
+  {
+    category: "Smash Burguer",
+    items: [
+      { id: 20, name: "Smash Burguer 1.0 Kids",   desc: "Pão Brioche, Maionese Verde, 1 Smash Artesanal 80g e Cheeder Fatia",                             price: 34.99, img: "smash-1-kids.jpg" },
+      { id: 21, name: "Smash Burguer 2.0 Bacon",  desc: "Pão Brioche, Maionese Verde, 2 Smash Artesanal 80g, Cheeder Fatia e Bacon Fatiado",              price: 34.99, img: "smash-2-bacon.jpg" },
+      { id: 22, name: "Smash Burguer 2.0 Calabresa", desc: "Pão Brioche, Maionese Verde, 2 Smash Artesanal 80g, Cheeder Fatia e Calabresa",               price: 34.99, img: "smash-2-calabresa.jpg" },
+      { id: 23, name: "Smash Duplo Da Casa",       desc: "Pão Brioche, Maionese Verde, 2 Smash Artesanal 80g, Mussarela, Cheeder Cremoso e Ovo",           price: 34.99, img: "smash-duplo-casa.jpg" },
+      { id: 24, name: "Smash Burguer 3.0 Bacon",   desc: "Pão Brioche, Maionese Verde, 3 Smash Artesanal 80g, Cheeder Fatia e Bacon",                     price: 27.99, img: "smash-3-bacon.jpg" },
+      { id: 25, name: "Smash Frangolino 3.0",      desc: "Pão Brioche, Maionese Verde, 3 Smash Artesanal 80g, Mussarela e Frango Desfiado",               price: 27.99, img: "smash-frangolino-3.jpg" },
+      { id: 26, name: "Smash Burguer 4.0 Bacon",   desc: "Pão Brioche, Maionese Verde, 4 Smash Artesanal 80g, Mussarela e Bacon",                         price: 32.84, img: "smash-4-bacon.jpg" },
+      { id: 27, name: "2 Smash Burguer Kids Por 39,99", desc: "2 Smash Burguer Kids — imperdível!!!",                                                      price: 39.99, img: "promo-2-smash-kids.jpg" },
+    ]
+  },
+  {
+    category: "Pão Australiano",
+    items: [
+      { id: 28, name: "Burguer House Australiano", desc: "Pão Australiano, Maionese Verde, Picles, Hambúrguer Artesanal 130g, Cheeder Fatia, Bacon e Cebola Caramelizada", price: 22.74, img: "burguer-house-australiano.jpg" },
+      { id: 29, name: "Monster Australiano",       desc: "Pão Australiano, Maionese Verde, Hambúrguer Artesanal 130g, Cheeder Fatia, Bacon, Cebola Roxa e Tomate",        price: 22.74, img: "monster-australiano.jpg" },
+    ]
+  },
+  {
+    category: "Pão Gergelim",
+    items: [
+      { id: 30, name: "Smash House Gergelim",      desc: "Pão Brioche Gergelim, Maionese Verde, 2 Smash Artesanal 80g, Picles, Cebola Roxa e Salada",     price: 34.99, img: "smash-house-gergelim.jpg" },
+    ]
+  },
+  {
+    category: "Lanches Industriais",
+    items: [
+      { id: 31, name: "X Burguer I",               desc: "Pão Brioche, Maionese Verde, 1 Hambúrguer Industrial, Mussarela, Salada, Milho e Batata Palha",  price: 8.00, img: "x-burguer-i.jpg" },
+      { id: 32, name: "X Salada I",                desc: "Pão Brioche, Maionese Verde, 2 Hambúrgueres Industrial, Mussarela, Salada, Milho e Batata Palha", price: 24.99, img: "x-salada-i.jpg" },
+      { id: 33, name: "House Bacon I",             desc: "Pão Brioche, Maionese Verde, 2 Hambúrgueres Industrial, Mussarela, Bacon, Salada, Batata Palha e Milho", price: 18.89, img: "house-bacon-i.jpg" },
+      { id: 34, name: "X Tudo House 4.0 I",        desc: "Pão Brioche, Maionese Verde, 4 Hambúrgueres Industrial, Presunto, Mussarela, 2 Ovos, Bacon, Salada, Calabresa, Batata Palha e Milho", price: 27.99, img: "x-tudo-house-4-i.jpg" },
+      { id: 35, name: "X Total House 4.0 I",       desc: "Pão Brioche, Maionese Verde, 4 Hambúrgueres Industrial, Mussarela, Presunto, 3 Ovos, Bacon, Frango Desfiado, Abacaxi", price: 32.84, img: "x-total-house-4-i.jpg" },
+      { id: 36, name: "X Framburguer House I",     desc: "Pão Brioche, Maionese Verde, 2 Hambúrgueres Industrial, Frango Desfiado, Presunto, Mussarela, Salada, Milho e Batata Palha", price: 29.99, img: "x-framburguer-house-i.jpg" },
+    ]
+  },
+  {
+    category: "Natural",
+    items: [
+      { id: 37, name: "2 X Steak Por 39,99",       desc: "2 X Steak — imperdível!",                                                                        price: 39.99, img: "promo-2-x-steak.jpg" },
+      { id: 38, name: "Vegetariano",               desc: "Pão Australiano, Ovo, Mussarela, Banana, Salada, Milho e Batata Palha",                           price: 24.99, img: "vegetariano.jpg" },
+    ]
+  },
+  {
+    category: "Sanduíches",
+    items: [
+      { id: 39, name: "X Frangolino House",        desc: "Pão Brioche, Maionese Verde, Empanado de Frango com Presunto de Peru e Queijo, Salada e Cebola Roxa", price: 15.39, img: "x-frangolino-house.jpg" },
+      { id: 40, name: "X Steak De Frango Empanado",desc: "Pão Brioche, Maionese Verde, Steak de Frango, Mussarela e Salada",                                price: 8.00, img: "x-steak-frango-empanado.jpg" },
+      { id: 41, name: "Misto Quente",              desc: "Pão Brioche, Presunto, Mussarela e Catupiry",                                                     price: 8.00, img: "misto-quente.jpg" },
+      { id: 42, name: "Americano",                 desc: "Pão Brioche, Maionese Verde, Presunto, Mussarela, Salada e Ovo",                                  price: 11.00, img: "americano.jpg" },
+    ]
+  },
+  {
+    category: "Pastel",
+    items: [
+      { id: 43, name: "2 Pastel Por 29,99",        desc: "2 Pasteis — imperdível!",                                                                         price: 29.99, img: "promo-2-pastel.jpg" },
+      { id: 44, name: "Pastel de Pizza",           desc: "Presunto, Queijo Mussarela, Tomate e Orégano",                                                    price: 14.99, img: "pastel-pizza.jpg" },
+      { id: 45, name: "Pastel House",              desc: "Presunto, Queijo Mussarela, Calabresa Em Fatia e Cheeder Cremoso",                                 price: 7.20, img: "pastel-house.jpg" },
+      { id: 46, name: "Pastel De Frango",          desc: "Delicioso Pastel de Frango",                                                                       price: 14.99, img: "pastel-frango.jpg" },
+      { id: 47, name: "Pastel De Frango C/Catupiry", desc: "Frango e Catupiry",                                                                             price: 16.99, img: "pastel-frango-catupiry.jpg" },
+      { id: 48, name: "Pastel De Frango C/Queijo", desc: "Frango e Queijo",                                                                                 price: 16.99, img: "pastel-frango-queijo.jpg" },
+      { id: 49, name: "Pastel De Frango C/Bacon",  desc: "Frango e Bacon",                                                                                  price: 17.99, img: "pastel-frango-bacon.jpg" },
+      { id: 50, name: "Pastel De Frango C/Cheeder Cremoso", desc: "Frango e Cheeder Cremoso",                                                               price: 16.99, img: "pastel-frango-cheeder.jpg" },
+      { id: 52, name: "Costela Com Mussarela",     desc: "Costela Desfiada e Mussarela",                                                                    price: 16.99, img: "pastel-costela-mussarela.jpg" },
+      { id: 53, name: "Pastel de Queijo",          desc: "Queijo Mussarela",                                                                                price: 14.99, img: "pastel-queijo.jpg" },
+      { id: 54, name: "Pastel 4 Queijos",          desc: "4 Queijos",                                                                                       price: 16.99, img: "pastel-4-queijos.jpg" },
+      { id: 55, name: "Pastel Queijo E Cheeder Cremoso", desc: "Queijo e Cheeder Cremoso",                                                                  price: 14.99, img: "pastel-queijo-cheeder.jpg" },
+      { id: 56, name: "Pastel Queijo E Catupiry",  desc: "Queijo e Catupiry",                                                                               price: 14.99, img: "pastel-queijo-catupiry.jpg" },
+      { id: 57, name: "Pastel Queijo E Milho",     desc: "Queijo e Milho",                                                                                  price: 14.99, img: "pastel-queijo-milho.jpg" },
+      { id: 58, name: "Pastel Queijo E Batata Palha", desc: "Queijo e Batata Palha",                                                                        price: 14.99, img: "pastel-queijo-batata-palha.jpg" },
+      { id: 59, name: "Pastel Mussarela Com Bacon Em Cubos", desc: "Mussarela e Bacon Em Cubos",                                                            price: 16.99, img: "pastel-mussarela-bacon.jpg" },
+      { id: 60, name: "Pastel Doce Prestígio",     desc: "Leite Condensado e Coco Ralado",                                                                  price: 14.99, img: "pastel-doce-prestigio.jpg" },
+    ]
+  },
+  {
+    category: "Bebidas",
+    items: [
+      { id: 61, name: "Coca Cola 350ml Zero",      desc: "Coca Cola 350ml Zero Açúcar",                                                                     price: 9.99, img: "coca-cola-350-zero.jpg" },
+      { id: 62, name: "Vinho Cantinho Do Vale 880ml", desc: "Vinho Cantinho Do Vale 880ml",                                                                 price: 14.99, img: "vinho-cantinho-vale.jpg" },
+    ]
+  }
+];
+
+// Filter categories with items
+const CATEGORIES = MENU.filter(c => c.items.length > 0);
+
+// Emoji map for categories without images
+const CAT_EMOJI = {
+  "Artesanais Burguer House": "🍔",
+  "Smash Burguer": "🔥",
+  "Pão Australiano": "🥖",
+  "Pão Gergelim": "🌿",
+  "Lanches Industriais": "🏭",
+  "Natural": "🥗",
+  "Sanduíches": "🥪",
+  "Pastel": "🥟",
+  "Bebidas": "🥤",
+};
+
+// Cart state
+let cart = {}; // { id: { item, qty } }
+
+// ══════════════════════════════════════════════
+// RENDER MENU
+// ══════════════════════════════════════════════
+function fmtPrice(n) {
+  return 'R$ ' + n.toFixed(2).replace('.', ',');
+}
+
+function buildNav() {
+  const nav = document.getElementById('cat-nav');
+  CATEGORIES.forEach((cat, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'cat-pill' + (i === 0 ? ' active' : '');
+    btn.textContent = (CAT_EMOJI[cat.category] || '🍽') + ' ' + cat.category;
+    btn.dataset.cat = cat.category;
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      const section = document.getElementById('sec-' + CSS.escape(cat.category));
+      if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    nav.appendChild(btn);
+  });
+}
+
+function buildMenu() {
+  const main = document.getElementById('menu-main');
+  CATEGORIES.forEach(cat => {
+    const section = document.createElement('section');
+    section.id = 'sec-' + cat.category;
+    section.dataset.category = cat.category;
+
+    const title = document.createElement('div');
+    title.className = 'cat-title';
+    title.textContent = (CAT_EMOJI[cat.category] || '🍽') + ' ' + cat.category;
+    section.appendChild(title);
+
+    const grid = document.createElement('div');
+    grid.className = 'cards-grid';
+
+    cat.items.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.id = 'card-' + item.id;
+      card.dataset.name = item.name.toLowerCase();
+      card.dataset.desc = item.desc.toLowerCase();
+      card.dataset.cat = cat.category.toLowerCase();
+
+      // IMAGE LOGIC: Try to load image, fallback to placeholder
+      if (item.img) {
+        const img = document.createElement('img');
+        img.className = 'card-img';
+        img.src = 'img/' + item.img;
+        img.alt = item.name;
+        img.onerror = function() {
+          this.style.display = 'none';
+          const ph = document.createElement('div');
+          ph.className = 'card-img-placeholder';
+          ph.textContent = CAT_EMOJI[cat.category] || '🍽';
+          card.prepend(ph);
+        };
+        card.appendChild(img);
+      } else {
+        const placeholder = document.createElement('div');
+        placeholder.className = 'card-img-placeholder';
+        placeholder.textContent = CAT_EMOJI[cat.category] || '🍽';
+        card.appendChild(placeholder);
+      }
+
+      const body = document.createElement('div');
+      body.className = 'card-body';
+      body.innerHTML = `
+        <div class="card-name">${item.name}</div>
+        <div class="card-desc">${item.desc}</div>
+        <div class="card-price">${fmtPrice(item.price)}</div>
+      `;
+      card.appendChild(body);
+
+      const badge = document.createElement('div');
+      badge.className = 'badge-qty';
+      badge.id = 'badge-' + item.id;
+      card.appendChild(badge);
+
+      const addBtn = document.createElement('button');
+      addBtn.className = 'card-add-btn';
+      addBtn.innerHTML = '＋';
+      addBtn.title = 'Adicionar ao carrinho';
+      addBtn.addEventListener('click', e => { e.stopPropagation(); addToCart(item); });
+      card.appendChild(addBtn);
+
+      card.addEventListener('click', () => addToCart(item));
+      grid.appendChild(card);
+    });
+
+    section.appendChild(grid);
+    main.appendChild(section);
+  });
+}
+
+// ══════════════════════════════════════════════
+// CART LOGIC
+// ══════════════════════════════════════════════
+function addToCart(item) {
+  if (cart[item.id]) {
+    cart[item.id].qty++;
+  } else {
+    cart[item.id] = { item, qty: 1 };
+  }
+  updateCartUI();
+}
+
+function removeFromCart(id) {
+  if (cart[id]) {
+    cart[id].qty--;
+    if (cart[id].qty <= 0) delete cart[id];
+  }
+  updateCartUI();
+}
+
+function cartTotal() {
+  return Object.values(cart).reduce((acc, { item, qty }) => acc + item.price * qty, 0);
+}
+
+function cartCount() {
+  return Object.values(cart).reduce((acc, { qty }) => acc + qty, 0);
+}
+
+function updateCartUI() {
+  const total = cartTotal();
+  const count = cartCount();
+
+  // Bar
+  const bar = document.getElementById('cart-bar');
+  if (count > 0) bar.classList.add('visible'); else bar.classList.remove('visible');
+  document.getElementById('cart-count-label').textContent = count + (count === 1 ? ' item' : ' itens');
+  document.getElementById('cart-total-label').textContent = fmtPrice(total);
+
+  // Card badges
+  CATEGORIES.forEach(cat => cat.items.forEach(item => {
+    const card = document.getElementById('card-' + item.id);
+    const badge = document.getElementById('badge-' + item.id);
+    if (!card) return;
+    const qty = cart[item.id]?.qty || 0;
+    if (qty > 0) {
+      card.classList.add('in-cart');
+      badge.textContent = 'x' + qty;
+    } else {
+      card.classList.remove('in-cart');
+    }
+  }));
+
+  // Modal
+  renderModalItems();
+  document.getElementById('modal-total').textContent = fmtPrice(total);
+}
+
+function renderModalItems() {
+  const container = document.getElementById('cart-items');
+  const entries = Object.values(cart);
+  if (entries.length === 0) {
+    container.innerHTML = '<div class="empty-cart">Seu carrinho está vazio 🛒<br>Escolha seus itens no cardápio!</div>';
+    return;
+  }
+  container.innerHTML = '';
+  entries.forEach(({ item, qty }) => {
+    const el = document.createElement('div');
+    el.className = 'cart-item';
+    el.innerHTML = `
+      <div class="cart-item-name">${item.name}</div>
+      <div class="qty-ctrl">
+        <button class="qty-btn" data-id="${item.id}" data-action="remove">−</button>
+        <span class="qty-num">${qty}</span>
+        <button class="qty-btn" data-id="${item.id}" data-action="add">＋</button>
+      </div>
+      <div class="cart-item-price">${fmtPrice(item.price * qty)}</div>
+    `;
+    container.appendChild(el);
+  });
+
+  // Bind qty buttons
+  container.querySelectorAll('.qty-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = parseInt(btn.dataset.id);
+      if (btn.dataset.action === 'add') {
+        cart[id].qty++;
+      } else {
+        removeFromCart(id);
+      }
+      updateCartUI();
+    });
+  });
+}
+
+// ══════════════════════════════════════════════
+// WHATSAPP
+// ══════════════════════════════════════════════
+const WA_NUMBER = '5500000000000'; 
+
+document.getElementById('send-whatsapp').addEventListener('click', () => {
+  const entries = Object.values(cart);
+  if (entries.length === 0) return;
+  const obs = document.getElementById('obs-input').value.trim();
+
+  let msg = '🍔 *Olá! Gostaria de fazer um pedido:*\n\n';
+  entries.forEach(({ item, qty }) => {
+    msg += `• ${qty}x ${item.name} — ${fmtPrice(item.price * qty)}\n`;
+  });
+  msg += `\n💰 *Total: ${fmtPrice(cartTotal())}*`;
+  if (obs) msg += `\n\n📝 *Observações:* ${obs}`;
+  msg += '\n\n_Pedido gerado pelo cardápio online_ 🚀';
+
+  const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
+});
+
+// ══════════════════════════════════════════════
+// SEARCH
+// ══════════════════════════════════════════════
+document.getElementById('search-input').addEventListener('input', function () {
+  const q = this.value.toLowerCase().trim();
+  let anyVisible = false;
+
+  document.querySelectorAll('.card').forEach(card => {
+    const match = !q || card.dataset.name.includes(q) || card.dataset.desc.includes(q) || card.dataset.cat.includes(q);
+    card.style.display = match ? '' : 'none';
+    if (match) anyVisible = true;
+  });
+
+  // Hide empty sections
+  document.querySelectorAll('section[id^="sec-"]').forEach(sec => {
+    const visible = [...sec.querySelectorAll('.card')].some(c => c.style.display !== 'none');
+    sec.style.display = visible ? '' : 'none';
+  });
+
+  document.getElementById('no-results').style.display = anyVisible ? 'none' : 'block';
+});
+
+// ══════════════════════════════════════════════
+// MODAL OPEN / CLOSE
+// ══════════════════════════════════════════════
+document.getElementById('open-cart-btn').addEventListener('click', () => {
+  document.getElementById('cart-modal').classList.add('open');
+  renderModalItems();
+});
+document.getElementById('close-cart').addEventListener('click', () => {
+  document.getElementById('cart-modal').classList.remove('open');
+});
+document.getElementById('cart-modal').addEventListener('click', function (e) {
+  if (e.target === this) this.classList.remove('open');
+});
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+buildNav();
+buildMenu();
+</script>
+</body>
+</html>
